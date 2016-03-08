@@ -1,0 +1,22 @@
+{
+  "name": "jello-postpackager-require-framework",
+  "version": "1.0.0",
+  "description": "dependency frame",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jiajianrong/jello-postpackager-require-framework.git"
+  },
+  "keywords": [
+    "require"
+  ],
+  "author": "jiajianrong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jiajianrong/jello-postpackager-require-framework/issues"
+  },
+  "homepage": "https://github.com/jiajianrong/jello-postpackager-require-framework#readme"
+}
