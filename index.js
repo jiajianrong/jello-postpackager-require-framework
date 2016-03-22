@@ -156,7 +156,7 @@ module.exports = function (ret, conf, settings, opt) {
         var str_sync = outputSyncStr(arr);
         var str_async = outputAsyncStr(arr);
         
-        return str_sync + str_async;
+        return str_sync + '\n    ' + str_async;
     }
     
     
@@ -178,8 +178,8 @@ module.exports = function (ret, conf, settings, opt) {
      *************************/
     function outputAsyncStr(arr) {
         
-        var map = {};
-        var arrRtn = [];
+        var map = {},
+            arrRtn = [];
         
         // 异步资源收集入 map
         arr.forEach(function(item) {
@@ -217,11 +217,11 @@ module.exports = function (ret, conf, settings, opt) {
             });
             
             // 和同步资源去重
-            arrAsync = quchongAsync(arrAsync,arr);
+            arrAsync = quchongAsync(arrAsync, arr);
             
-            map[key] = arrAsync;
-            
-            arrRtn.push( '<script>require.loadAsync(' + JSON.stringify(map) + ');</script>' );
+            var obj = {};
+            obj[key] = arrAsync;
+            arrRtn.push( '<script>require.loadAsync(' + JSON.stringify(obj) + ');</script>' );
         }
 
         
@@ -249,23 +249,6 @@ module.exports = function (ret, conf, settings, opt) {
             file.setContent(content);
         }
     });
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
