@@ -232,7 +232,11 @@ module.exports = function (ret, conf, settings, opt) {
     
     
     
-    //再次遍历文件，找到isViews标记的文件
+    /**
+     * JS 处理
+     **/
+    
+    //遍历文件，找到isViews标记的文件
     //替换里面的__FRAMEWORK_CONFIG__钩子
     fis.util.map(ret.src, function(subpath, file) {
         //有isViews标记，并且是js或者html类文件，才需要做替换
@@ -249,6 +253,99 @@ module.exports = function (ret, conf, settings, opt) {
             file.setContent(content);
         }
     });
+    
+    
+    
+    
+    
+    
+    
+    
+    function mergeCss(cssDeps) {
+        if(cssDeps.length<=1)
+            return;
+        
+        var str = "";
+        
+        for(var i=0, f;i<cssDeps.length;i++) {
+            f = ret.src['/'+cssDeps[i]];
+            str += f.getContent();
+        }
+        
+        f.setContent(str);
+    }
+    
+    
+    
+    
+    function diguiCss(jsName, rtnRes) {
+        
+        allRes.forEach(function(item) {
+
+            // 命中该对象，分析依赖，装入rtnRes
+            if (item.fileName && item.fileName.indexOf(jsName) != -1) {
+                
+                // 先提取css依赖
+                if (item.deps && item.deps.length) {
+                    item.deps.forEach(function(item) {
+                        /\.s?css$/i.test(item) && rtnRes.unshift(item);
+                    });
+                }
+                
+                // 同步依赖
+                if (item.deps && item.deps.length) {
+                    item.deps.forEach(function(item) {
+                        !/\.scss$/i.test(item) && diguiCss(item+".js", rtnRes);
+                    });
+                }
+                
+                // 异步依赖
+                if (item.asyncDeps && item.asyncDeps.length) {
+                    item.asyncDeps.forEach(function(item) {
+                        !/\.scss$/i.test(item) && diguiCss(item+".js", rtnRes);
+                    });
+                }
+                
+            }
+
+        });
+    }
+    
+    
+    
+    /**
+     * CSS 处理
+     **/
+    
+    
+    //再次遍历文件，找到isViews标记的文件
+    //提取并合并其CSS依赖
+    fis.util.map(ret.src, function(subpath, file) {
+        //有isViews标记，并且是js或者html类文件，才需要做替换
+        if (file.isViews && (file.isJsLike || file.isHtmlLike)) {
+
+            // 当前view对应的js文件
+            var jsName = file.id.replace(/\.vm/, '.js'),
+                cssDeps = [];
+            
+            diguiCss(jsName,cssDeps);
+            
+            // Todo 2016-03-28 jiajianrong
+            // widgetCss();
+            
+            mergeCss(cssDeps);
+        }
+    });
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
