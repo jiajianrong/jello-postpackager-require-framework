@@ -12,11 +12,13 @@ module.exports = function (ret, conf, settings, opt) {
      
      0: Object
         deps: Array[9]
+        fileType: 'js'
         fileName: "page/car-apply/car-apply.js"
         fileUri: "/crm-m/static/page/car-apply/car-apply_4e6788d.js"
         
      1: Object
         deps: undefined
+        fileType: 'css'
         fileName: "page/car-apply/car-apply.scss"
         fileUri: "/crm-m/static/page/car-apply/car-apply_9101db8.css"
      *************************/
@@ -26,6 +28,7 @@ module.exports = function (ret, conf, settings, opt) {
             var obj = {};
             
             obj.fileName = fileName;
+            obj.fileType = fileDetails.type;
             obj.fileUri = fileDetails.uri; // with md5
             
             // 2016-03-17 同步依赖分析
@@ -51,7 +54,7 @@ module.exports = function (ret, conf, settings, opt) {
         allRes.forEach(function(item) {
 
             // 命中该对象，分析依赖，装入rtnRes
-            if (item.fileName && item.fileName.indexOf(jsName) != -1) {
+            if (item.fileName && item.fileType=='js' && ( item.fileName.indexOf(jsName+'.js') != -1 || item.fileName.indexOf(jsName+'.es6') != -1 ) ) {
                 
                 var obj = {};
                 
@@ -63,7 +66,7 @@ module.exports = function (ret, conf, settings, opt) {
                     obj.deps = item.deps;
                     
                     item.deps.forEach(function(item) {
-                        digui(item + ".js", rtnRes);
+                        digui(item, rtnRes);
                     });
                 }
                 
@@ -74,7 +77,7 @@ module.exports = function (ret, conf, settings, opt) {
                     obj.asyncMap = {};
                     
                     item.asyncDeps.forEach(function(item) {
-                        digui(item + ".js", obj.asyncMap[item] = []);
+                        digui(item, obj.asyncMap[item] = []);
                     });
                 }
 
@@ -243,7 +246,7 @@ module.exports = function (ret, conf, settings, opt) {
         if (file.isViews && (file.isJsLike || file.isHtmlLike)) {
 
             // 当前view对应的js文件
-            var jsName = file.id.replace(/\.vm/, '.js');
+            var jsName = file.id.replace(/\.vm/, '');
             
             var stringify = outputStr(jsName);
 
