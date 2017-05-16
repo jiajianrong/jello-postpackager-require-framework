@@ -168,10 +168,17 @@ module.exports = function (ret, conf, settings, opt) {
      * 同步资源
      *************************/
     function outputSyncStr(arr) {
+        /* 2017-5-16 jiajianrong - require 替代 script tag
         var syncArr = arr.map(function(item) {
             return "<script src='" + item.fileUri + "'></script>";
         });
         return syncArr.join('\n    ');
+        */
+        var syncArr = arr.map(function(item) {
+            return "'" + item.fileUri + "'";
+        });
+
+        return "\n    <script>require([" + syncArr.join(',') + "]);</script>";
     }
     
     
